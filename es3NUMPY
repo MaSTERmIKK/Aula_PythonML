@@ -1,0 +1,193 @@
+import numpy as np
+
+def create_matrix(rows, cols):
+    return np.random.randint(1, 101, size=(rows, cols))
+
+def print_submatrix(matrix):
+    rows, cols = matrix.shape
+    start_row = rows // 4
+    end_row = start_row + rows // 2
+    start_col = cols // 4
+    end_col = start_col + cols // 2
+    sub_matrix = matrix[start_row:end_row, start_col:end_col]
+    print("Sotto-matrice centrale:\n", sub_matrix)
+
+def transpose_matrix(matrix):
+    transposed = np.transpose(matrix)
+    print("Matrice trasposta:\n", transposed)
+
+def sum_elements(matrix):
+    total_sum = np.sum(matrix)
+    print("Somma di tutti gli elementi:", total_sum)
+
+def multiply_by_scalar(matrix, scalar):
+    result = matrix * scalar
+    print(f"Matrice moltiplicata per {scalar}:\n", result)
+
+def calculate_determinant(matrix):
+    if matrix.shape[0] != matrix.shape[1]:
+        print("Il determinante può essere calcolato solo per matrici quadrate.")
+        return
+    det = np.linalg.det(matrix)
+    print("Determinante della matrice:", det)
+
+def solve_linear_system(matrix, b):
+    if matrix.shape[0] != matrix.shape[1]:
+        print("Il sistema lineare può essere risolto solo per matrici quadrate.")
+        return
+    try:
+        solution = np.linalg.solve(matrix, b)
+        print("Soluzione del sistema lineare:", solution)
+    except np.linalg.LinAlgError as e:
+        print("Errore nella risoluzione del sistema lineare:", e)
+
+def add_row_or_column(matrix, values, axis):
+    if axis == 0 and len(values) != matrix.shape[1]:
+        print("Il numero di valori non corrisponde al numero di colonne della matrice.")
+        return matrix
+    if axis == 1 and len(values) != matrix.shape[0]:
+        print("Il numero di valori non corrisponde al numero di righe della matrice.")
+        return matrix
+    if axis == 0:
+        return np.vstack([matrix, values])
+    else:
+        return np.hstack([matrix, np.reshape(values, (-1, 1))])
+
+def save_matrix_to_file(matrix, filename):
+    np.save(filename, matrix)
+    print(f"Matrice salvata in {filename}.npy")
+
+def load_matrix_from_file(filename):
+    try:
+        matrix = np.load(filename + '.npy')
+        print(f"Matrice caricata da {filename}.npy:\n", matrix)
+        return matrix
+    except IOError:
+        print("Errore nel caricamento del file.")
+        return None
+
+def calculate_inverse(matrix):
+    if matrix.shape[0] != matrix.shape[1]:
+        print("L'inversa può essere calcolata solo per matrici quadrate.")
+        return
+    try:
+        inv = np.linalg.inv(matrix)
+        print("Inversa della matrice:\n", inv)
+    except np.linalg.LinAlgError as e:
+        print("Errore nel calcolo dell'inversa:", e)
+
+def apply_function(matrix, func):
+    try:
+        result = func(matrix)
+        print(f"Matrice dopo l'applicazione di {func.__name__}:\n", result)
+    except Exception as e:
+        print("Errore nell'applicazione della funzione:", e)
+
+def filter_elements(matrix, condition):
+    filtered = matrix[condition(matrix)]
+    print("Elementi che soddisfano la condizione:\n", filtered)
+
+def main():
+    matrix = None
+    while True:
+        print("\nMenu:")
+        print("1. Creare una nuova matrice 2D")
+        print("2. Estrarre e stampare la sotto-matrice centrale")
+        print("3. Trasporre la matrice e stamparla")
+        print("4. Calcolare e stampare la somma di tutti gli elementi della matrice")
+        print("5. Uscire")
+        print("6. Moltiplicare la matrice per un valore scalare")
+        print("7. Calcolare il determinante della matrice (solo se è quadrata)")
+        print("8. Risolvere un sistema lineare Ax = b")
+        print("9. Aggiungere una riga o colonna alla matrice")
+        print("10. Salva la matrice in un file e caricala da un file")
+        print("11. Calcolare la matrice inversa (se la matrice è quadrata e invertibile)")
+        print("12. Applicare una funzione matematica a tutti gli elementi della matrice (ad esempio, sin, cos, exp)")
+        print("13. Filtrare e visualizzare solo gli elementi della matrice che soddisfano una determinata condizione")
+        choice = input("Scegli un'opzione (1-13): ")
+
+        if choice == '1':
+            rows = int(input("Inserisci il numero di righe: "))
+            cols = int(input("Inserisci il numero di colonne: "))
+            matrix = create_matrix(rows, cols)
+            print("Matrice creata:\n", matrix)
+        elif choice == '2':
+            if matrix is not None:
+                print_submatrix(matrix)
+            else:
+                print("Prima crea una matrice.")
+        elif choice == '3':
+            if matrix is not None:
+                transpose_matrix(matrix)
+            else:
+                print("Prima crea una matrice.")
+        elif choice == '4':
+            if matrix is not None:
+                sum_elements(matrix)
+            else:
+                print("Prima crea una matrice.")
+        elif choice == '5':
+            print("Uscita dal programma.")
+            break
+        elif choice == '6':
+            if matrix is not None:
+                scalar = float(input("Inserisci il valore scalare: "))
+                multiply_by_scalar(matrix, scalar)
+            else:
+                print("Prima crea una matrice.")
+        elif choice == '7':
+            if matrix is not None:
+                calculate_determinant(matrix)
+            else:
+                print("Prima crea una matrice.")
+        elif choice == '8':
+            if matrix is not None:
+                b = np.array([float(x) for x in input("Inserisci i coefficienti di b (separati da spazi): ").split()])
+                if len(b) == matrix.shape[0]:
+                    solve_linear_system(matrix, b)
+                else:
+                    print("La lunghezza di b deve essere uguale al numero di righe della matrice.")
+            else:
+                print("Prima crea una matrice.")
+        elif choice == '9':
+            if matrix is not None:
+                axis = int(input("Inserisci 0 per aggiungere una riga, 1 per aggiungere una colonna: "))
+                values = np.array([float(x) for x in input("Inserisci i valori (separati da spazi): ").split()])
+                matrix = add_row_or_column(matrix, values, axis)
+                print("Matrice aggiornata:\n", matrix)
+            else:
+                print("Prima crea una matrice.")
+        elif choice == '10':
+            if matrix is not None:
+                filename = input("Inserisci il nome del file (senza estensione): ")
+                save_matrix_to_file(matrix, filename)
+                matrix = load_matrix_from_file(filename)
+            else:
+                print("Prima crea una matrice.")
+        elif choice == '11':
+            if matrix is not None:
+                calculate_inverse(matrix)
+            else:
+                print("Prima crea una matrice.")
+        elif choice == '12':
+            if matrix is not None:
+                func_name = input("Inserisci il nome della funzione (sin, cos, exp): ")
+                func_map = {'sin': np.sin, 'cos': np.cos, 'exp': np.exp}
+                if func_name in func_map:
+                    apply_function(matrix, func_map[func_name])
+                else:
+                    print("Funzione non valida.")
+            else:
+                print("Prima crea una matrice.")
+        elif choice == '13':
+            if matrix is not None:
+                condition_str = input("Inserisci la condizione (es. x > 10): ")
+                condition = eval("lambda x: " + condition_str)
+                filter_elements(matrix, condition)
+            else:
+                print("Prima crea una matrice.")
+        else:
+            print("Opzione non valida. Riprova.")
+
+if __name__ == "__main__":
+    main()
